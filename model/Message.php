@@ -1,6 +1,6 @@
 <?php
 
-class Messages {
+class Message {
     private $id; // Ajout de l'ID (si vous utilisez une base de données)
     private $nom;
     private $email;

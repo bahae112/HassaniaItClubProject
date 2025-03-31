@@ -1,6 +1,6 @@
 <?php
 
-class Utilisateurs {
+class Utilisateur {
     private $nom;
     private $prenom;
     private $role;
