@@ -47,7 +47,7 @@
                         </form>
 
                         <div class="text-center mt-3">
-                            <a href="../../index.php" class="btn btn-link">Retour</a>
+                            <a href="../layout.php" class="btn btn-link">Retour</a>
                         </div>
                     </div>
                 </div>

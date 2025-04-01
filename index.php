@@ -6,8 +6,8 @@ $action = $_GET['action'] ?? 'dashboard';
 
 // Empêcher l'accès à toutes les actions sauf 'dashboard' et 'Authenticate' (car c'est l'action de connexion)
 // Si l'utilisateur n'est pas connecté et que l'action est autre que 'dashboard' ou 'Authenticate', il sera redirigé
-if ( $action !== 'Authenticate' && !isset($_SESSION['user'])) {
-    header("Location: view/authentification/login.php");
+if ( $action !== 'Authenticate' &&  !isset($_SESSION['user'])) {
+    header("Location: view/layout.php");
     exit();
 }
 
