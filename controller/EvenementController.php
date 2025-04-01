@@ -127,7 +127,7 @@ class EvenementController {
                         header("Location: index.php?action=listEvenements");
                         exit();
                     } else {
-                        $errors[] = "Erreur lors de l'enregistrement de l'événement dans la base de données.";
+                        header("Location: index.php?action=listEvenements");
                     }
                 } catch (PDOException $e) {
                     $errors[] = "Erreur de base de données : " . $e->getMessage();
@@ -150,34 +150,89 @@ class EvenementController {
     
 
     public function editEvenement($id) {
+        // Récupérer l'événement actuel depuis la base de données
         $evenement = $this->evenementDAO->getEvenementById($id);
-        
+    
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Récupération des données du formulaire
+            $titre = $_POST['titre'];
+            $description = $_POST['description'];
+            $typeEvenement = $_POST['typeEvenement'];
+            $date = $_POST['date'];
+            $heureDebut = $_POST['heureDebut'];
+            $heureFin = $_POST['heureFin'];
+            $lieu = $_POST['lieu'];
+            $clubOrganisateur = $_POST['clubOrganisateur'];
+            $ecoleOrganisatrice = $_POST['ecoleOrganisatrice'];
+            $statut = $_POST['statut'];
+            
+            // Garder l'ancienne image par défaut
+            $imageUrl = $evenement->getImageUrl();
+            
+            // Vérifier si une nouvelle image a été uploadée
+            if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                $imageTmpPath = $_FILES['image']['tmp_name'];
+                $imageName = $_FILES['image']['name'];
+                $imageExtension = strtolower(pathinfo($imageName, PATHINFO_EXTENSION));
+    
+                // Vérification des extensions autorisées
+                $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+                if (!in_array($imageExtension, $allowedExtensions)) {
+                    echo "<div class='error'>Extension de fichier non autorisée.</div>";
+                } else {
+                    // Nettoyer le titre pour générer un nom de fichier unique
+                    $cleanedTitle = preg_replace('/[^a-zA-Z0-9]/', '_', strtolower($titre));
+                    $newImageName = $cleanedTitle . '_' . time() . '.' . $imageExtension;
+    
+                    $uploadDirectory = __DIR__ . '/../public/uploads/images/';
+    
+                    // Créer le répertoire si nécessaire
+                    if (!file_exists($uploadDirectory)) {
+                        mkdir($uploadDirectory, 0777, true);
+                    }
+    
+                    // Déplacer le fichier uploadé
+                    if (move_uploaded_file($imageTmpPath, $uploadDirectory . $newImageName)) {
+                        // Supprimer l'ancienne image si elle existe
+                        if (!empty($imageUrl) && file_exists(__DIR__ . '/../public/' . $imageUrl)) {
+                            unlink(__DIR__ . '/../public/' . $imageUrl);
+                        }
+    
+                        // Mettre à jour l'URL de l'image
+                        $imageUrl = 'uploads/images/' . $newImageName;
+                    } else {
+                        echo "<div class='error'>Erreur lors de l'upload de l'image.</div>";
+                    }
+                }
+            }
+    
+            // Création de l'objet Evenement mis à jour
             $evenement = new Evenement(
                 $id,
-                $_POST['titre'],
-                $_POST['description'],
-                $_POST['typeEvenement'],
-                $_POST['date'],
-                $_POST['heureDebut'],
-                $_POST['heureFin'],
-                $_POST['lieu'],
-                $_POST['clubOrganisateur'],
-                $_POST['ecoleOrganisatrice'],
-                $_POST['statut'],
-                $_POST['imageUrl']
+                $titre,
+                $description,
+                $typeEvenement,
+                $date,
+                $heureDebut,
+                $heureFin,
+                $lieu,
+                $clubOrganisateur,
+                $ecoleOrganisatrice,
+                $statut,
+                $imageUrl
             );
-
-            $this->evenementDAO->updateEvenement($evenement);
-            header("Location: index.php?action=list");
+    
+            // Mettre à jour l'événement dans la base de données
+            if ($this->evenementDAO->updateEvenement($evenement)) {
+                header("Location: index.php?action=listEvenements");
+                exit();
+            } else {
+                echo "<div class='error'>Erreur lors de la mise à jour de l'événement.</div>";
+            }
         } else {
+            // Afficher la vue de modification
             require 'view/evenements/edit.php';
         }
-    }
-
-    public function deleteEvenement($id) {
-        $this->evenementDAO->deleteEvenement($id);
-        header("Location: index.php?action=list");
     }
 
 
@@ -252,6 +307,17 @@ class EvenementController {
             }
         }
     }
+
+    public function deleteEvenement($id) {
+        if ($this->evenementDAO->deleteEvenement($id)) {
+            // Redirection après suppression
+            header("Location: index.php?action=listEvenements");
+            exit();
+        } else {
+            echo "<div class='error'>Erreur lors de la suppression de l'événement.</div>";
+        }
+    }
+    
     
     
     

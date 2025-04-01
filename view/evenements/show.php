@@ -38,15 +38,15 @@
                 <div class="image-container">
                     <?php 
                         // Nettoyer le titre pour l'utiliser comme nom de fichier d'image
-                        $imageTitle = preg_replace('/[^a-zA-Z0-9]/', '_', strtolower($evenement->getTitre())); // Correctement exécuté
-                        // Utilisez le bon chemin d'accès relatif depuis la racine du serveur
-                        $imagePath = "/HassaniaItClubProject/public/uploads/images/" . $imageTitle . ".jpeg"; // Assurez-vous de la bonne extension
+                        $imageTitle = preg_replace('/[^a-zA-Z0-9]/', '_', strtolower($evenement->getTitre())); // Nom de fichier sécurisé
+                        // Définir le chemin de l'image
+                        $imagePath = "/HassaniaItClubProject/public/uploads/images/" . $imageTitle . ".jpeg"; 
 
-                        // Vérifiez si le fichier existe avec le bon chemin
+                        // Vérifier si le fichier existe
                         if (file_exists($_SERVER['DOCUMENT_ROOT'] . $imagePath)): ?>
-                            <img src="<?= $imagePath ?>" alt="Image de l'événement" class="profile-image">
+                            <img src="<?= $imagePath ?>?v=<?= time() ?>" alt="Image de l'événement" class="profile-image">
                         <?php else: ?>
-                            <img src="/HassaniaItClubProject/public/uploads/images/default.jpg" alt="Image par défaut" class="profile-image"> <!-- Image par défaut -->
+                            <img src="/HassaniaItClubProject/public/uploads/images/default.jpg?v=<?= time() ?>" alt="Image par défaut" class="profile-image"> <!-- Image par défaut -->
                         <?php endif; ?>
                 </div>
 
