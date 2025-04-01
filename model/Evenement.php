@@ -90,6 +90,9 @@ class Evenement {
     }
 
     // Setters
+    public function setId($id) {
+        $this->id = $id;
+    }
     public function setTitre(string $titre): void {
         $this->titre = $titre;
     }

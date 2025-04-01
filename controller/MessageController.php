@@ -11,14 +11,14 @@ class MessageController {
     // Afficher la liste des messages
     public function listMessages() {
         $messages = $this->messageDAO->allMessages();
-        require 'views/messages/list.php';
+        require 'view/messages/list.php';
     }
 
     // Afficher les détails d'un message
     public function showMessage($id) {
         $message = $this->messageDAO->getMessageById($id);
         if ($message) {
-            require 'views/messages/show.php';
+            require 'view/messages/show.php';
         } else {
             echo "Message introuvable.";
         }
@@ -38,7 +38,7 @@ class MessageController {
             $this->messageDAO->saveMessage($message);
             header("Location: index.php?action=listMessages");
         } else {
-            require 'views/messages/add.php';
+            require 'view/messages/add.php';
         }
     }
 
@@ -55,7 +55,7 @@ class MessageController {
         
         $messages = $this->messageDAO->searchMessages($nom, $objet);
         
-        require 'views/messages/searchResults.php';
+        require 'view/messages/searchResults.php';
     }
 }
 ?>

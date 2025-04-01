@@ -12,3 +12,5 @@
 <a href="index.php?action=deleteUtilisateur&id=<?= $utilisateur['id'] ?>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">Supprimer</a>
 
 <a href="index.php?action=listUtilisateurs">Retour à la liste</a>
+
+<a href="view/dashboard.php">Retour au Tableau de Bord</a>

@@ -1,17 +1,25 @@
 <?php
-include "../model/Message.php";
+include_once(__DIR__ . '/../model/Message.php');
+
 
 class DAOMessage {
     private $dbh;
 
     public function __construct() {
         try {
-            $this->dbh = new PDO('mysql:host=localhost;dbname=your_database', 'root', '');
+            $host = 'localhost';
+            $port = 3306; // Remplacez par votre port MySQL (ex: 3307 si différent)
+            $dbname = 'HassaniaItClub';
+            $username = 'root';
+            $password = '';
+        
+            $this->dbh = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4", $username, $password);
             $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch(PDOException $e) {
+        } catch (PDOException $e) {
             error_log('Database Connection Error: ' . $e->getMessage());
             throw new Exception("Database Connection Error");
         }
+        
     }
 
     // Sauvegarder un message dans la base de données

@@ -13,3 +13,5 @@
 
     <button type="submit">Envoyer</button>
 </form>
+
+<a href="view/dashboard.php">Retour au Tableau de Bord</a>

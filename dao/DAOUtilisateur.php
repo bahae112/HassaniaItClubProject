@@ -1,17 +1,32 @@
 <?php
-include "../model/Utilisateur.php";
+
+include_once(__DIR__ . '/../model/Utilisateur.php');
 
 class DAOUtilisateur {
     private $dbh;
 
     public function __construct() {
         try {
-            $this->dbh = new PDO('mysql:host=localhost;dbname=your_database', 'root', '');
+            $host = 'localhost';
+            $port = 3306; // Remplacez par le port réel de MySQL (ex: 3307 si modifié)
+            $dbname = 'HassaniaItClub';
+            $username = 'root';
+            $password = '';
+        
+            $this->dbh = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4", $username, $password);
             $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch(PDOException $e) {
+        } catch (PDOException $e) {
             error_log('Database Connection Error: ' . $e->getMessage());
             throw new Exception("Database Connection Error");
         }
+        
+    }
+
+    // Récupérer tous les utilisateurs
+    public function getAll() {
+        $sql = "SELECT * FROM utilisateurs";
+        $stmt = $this->dbh->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);  // Retourne tous les utilisateurs sous forme de tableau associatif
     }
 
     // Ajouter un utilisateur
@@ -33,8 +48,24 @@ class DAOUtilisateur {
         $stm = $this->dbh->prepare("SELECT * FROM utilisateurs WHERE id = ?");
         $stm->execute([$id]);
         $result = $stm->fetch(PDO::FETCH_ASSOC);
-        return $result ? new Utilisateur($result['nom'], $result['prenom'], $result['role'], $result['telephone'], $result['datePriseDeFonction'], $result['email'], $result['motDePasse']) : null;
+        if ($result) {
+            // Créer l'objet Utilisateur sans l'ID, et ensuite définir l'ID après la récupération
+            $utilisateur = new Utilisateur(
+                $result['nom'],
+                $result['prenom'],
+                $result['role'],
+                $result['telephone'],
+                $result['datePriseDeFonction'],
+                $result['email'],
+                $result['motDePasse']
+            );
+            // Assigner l'ID à l'objet Utilisateur
+            $utilisateur->setId((int)$result['id']);
+            return $utilisateur;
+        }
+        return null;
     }
+    
 
     // Récupérer les utilisateurs par rôle
     public function getUtilisateursByRole($role) {
@@ -110,5 +141,42 @@ class DAOUtilisateur {
         $result = $stm->fetchAll(PDO::FETCH_ASSOC);
         return $result;
     }
+
+
+    public function updateUtilisateur($id, $nom, $prenom, $role, $telephone, $datePriseDeFonction, $email, $motDePasse) {
+        $sql = "UPDATE utilisateurs SET nom = ?, prenom = ?, role = ?, telephone = ?, datePriseDeFonction = ?, email = ?" . 
+               ($motDePasse ? ", motDePasse = ?" : "") . 
+               " WHERE id = ?";
+    
+        $params = [$nom, $prenom, $role, $telephone, $datePriseDeFonction, $email];
+        if ($motDePasse) {
+            $params[] = $motDePasse;
+        }
+        $params[] = $id;
+    
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->execute($params);
+    }
+    
+
+    public function getUtilisateurByEmail($email) {
+        $stm = $this->dbh->prepare("SELECT * FROM utilisateurs WHERE email = ?");
+        $stm->execute([$email]);
+        $result = $stm->fetch(PDO::FETCH_ASSOC);
+        
+        if ($result) {
+            return new Utilisateur(
+                $result['nom'],
+                $result['prenom'],
+                $result['role'],
+                $result['telephone'],
+                $result['datePriseDeFonction'],
+                $result['email'],
+                $result['motDePasse']
+            );
+        }
+        return null;
+    }
+    
 }
 ?>

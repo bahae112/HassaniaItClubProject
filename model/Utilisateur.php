@@ -1,6 +1,7 @@
 <?php
 
 class Utilisateur {
+    private int $id;
     private $nom;
     private $prenom;
     private $role;
@@ -20,6 +21,11 @@ class Utilisateur {
     }
 
     // Getters
+
+    public function getId() {
+        return $this->id;
+    }
+
     public function getNom() {
         return $this->nom;
     }
@@ -49,6 +55,10 @@ class Utilisateur {
     }
 
     // Setters
+    public function setId($id) {
+        $this->id = $id;
+    }
+
     public function setNom($nom) {
         $this->nom = $nom;
     }
