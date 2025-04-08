@@ -6,7 +6,7 @@ $action = $_GET['action'] ?? 'dashboard';
 
 // Empêcher l'accès à toutes les actions sauf 'dashboard' et 'Authenticate' (car c'est l'action de connexion)
 // Si l'utilisateur n'est pas connecté et que l'action est autre que 'dashboard' ou 'Authenticate', il sera redirigé
-if ( $action !== 'Authenticate' &&  !isset($_SESSION['user'])) {
+if ( $action !== 'Authenticate' && $action !== 'evenements' &&  !isset($_SESSION['user'])) {
     header("Location: view/layout.php");
     exit();
 }
@@ -170,5 +170,14 @@ switch ($action) {
     default:
         include 'view/layout.php';  // Page principale pour l'admin
         break;
+    
+    case 'evenements':
+        $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+        $evenementController->afficherEvenements($page);
+        break;
+    // case 'rechercherEvenements2':
+    //     $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+    //     $evenementController->afficherEvenements($page);
+    //     break;        
 }
 ?>

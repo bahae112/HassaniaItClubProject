@@ -154,6 +154,131 @@ class DAOEvenement {
         $stm = $this->dbh->prepare("DELETE FROM evenements WHERE id = ?");
         return $stm->execute([$id]);
     }
+
+
+
+    //partie evenements.php
+    public function getEvenementsWithPagination($limit, $offset) {
+        $stmt = $this->dbh->prepare("SELECT * FROM evenements ORDER BY date DESC LIMIT ? OFFSET ?");
+        $stmt->bindParam(1, $limit, PDO::PARAM_INT);
+        $stmt->bindParam(2, $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function getPremiumEvenements() {
+        $stmt = $this->dbh->query("SELECT * FROM evenements WHERE typeEvenement = 'Premium' ORDER BY date DESC LIMIT 5");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function countAllEvenements() {
+        $stmt = $this->dbh->query("SELECT COUNT(*) FROM evenements");
+        return $stmt->fetchColumn();
+    }
+
+
+
+    // DAO/EvénementDAO.php
+
+     // Méthode pour récupérer les événements avec pagination et recherche
+     public function getEvenementsWithPaginationAndSearch($criteria, $limit, $offset) {
+        $sql = "SELECT * FROM evenements WHERE 1=1";
+
+        // Ajouter les filtres dynamiques à la requête
+        if (!empty($criteria['titre'])) {
+            $sql .= " AND titre LIKE :titre";
+        }
+        if (!empty($criteria['typeEvenement'])) {
+            $sql .= " AND typeEvenement LIKE :typeEvenement";
+        }
+        if (!empty($criteria['date'])) {
+            $sql .= " AND date = :date";
+        }
+        if (!empty($criteria['lieu'])) {
+            $sql .= " AND lieu LIKE :lieu";
+        }
+        if (!empty($criteria['clubOrganisateur'])) {
+            $sql .= " AND clubOrganisateur LIKE :clubOrganisateur";
+        }
+
+        // Ajouter la pagination
+        $sql .= " LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->dbh->prepare($sql);
+
+        // Lier les valeurs aux paramètres
+        if (!empty($criteria['titre'])) {
+            $stmt->bindValue(':titre', '%' . $criteria['titre'] . '%');
+        }
+        if (!empty($criteria['typeEvenement'])) {
+            $stmt->bindValue(':typeEvenement', '%' . $criteria['typeEvenement'] . '%');
+        }
+        if (!empty($criteria['date'])) {
+            $stmt->bindValue(':date', $criteria['date']);
+        }
+        if (!empty($criteria['lieu'])) {
+            $stmt->bindValue(':lieu', '%' . $criteria['lieu'] . '%');
+        }
+        if (!empty($criteria['clubOrganisateur'])) {
+            $stmt->bindValue(':clubOrganisateur', '%' . $criteria['clubOrganisateur'] . '%');
+        }
+
+        // Lier les paramètres de pagination
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Méthode pour compter le nombre d'événements après filtrage
+    public function countFilteredEvenements($criteria) {
+        $sql = "SELECT COUNT(*) FROM evenements WHERE 1=1";
+
+        // Ajouter les filtres dynamiques à la requête
+        if (!empty($criteria['titre'])) {
+            $sql .= " AND titre LIKE :titre";
+        }
+        if (!empty($criteria['typeEvenement'])) {
+            $sql .= " AND typeEvenement LIKE :typeEvenement";
+        }
+        if (!empty($criteria['date'])) {
+            $sql .= " AND date = :date";
+        }
+        if (!empty($criteria['lieu'])) {
+            $sql .= " AND lieu LIKE :lieu";
+        }
+        if (!empty($criteria['clubOrganisateur'])) {
+            $sql .= " AND clubOrganisateur LIKE :clubOrganisateur";
+        }
+
+        $stmt = $this->dbh->prepare($sql);
+
+        // Lier les valeurs aux paramètres
+        if (!empty($criteria['titre'])) {
+            $stmt->bindValue(':titre', '%' . $criteria['titre'] . '%');
+        }
+        if (!empty($criteria['typeEvenement'])) {
+            $stmt->bindValue(':typeEvenement', '%' . $criteria['typeEvenement'] . '%');
+        }
+        if (!empty($criteria['date'])) {
+            $stmt->bindValue(':date', $criteria['date']);
+        }
+        if (!empty($criteria['lieu'])) {
+            $stmt->bindValue(':lieu', '%' . $criteria['lieu'] . '%');
+        }
+        if (!empty($criteria['clubOrganisateur'])) {
+            $stmt->bindValue(':clubOrganisateur', '%' . $criteria['clubOrganisateur'] . '%');
+        }
+
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+    }
+    
+
+    
 }
 
 ?>

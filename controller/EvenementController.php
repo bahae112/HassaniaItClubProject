@@ -317,6 +317,37 @@ class EvenementController {
             echo "<div class='error'>Erreur lors de la suppression de l'événement.</div>";
         }
     }
+
+    
+   public function afficherEvenements($page) {
+    $eventsPerPage = 12; // 3 colonnes * 4 lignes
+    $offset = ($page - 1) * $eventsPerPage;
+
+    // Récupérer les critères de recherche à partir de la requête GET
+    $criteria = [
+        'titre' => isset($_POST['titre']) ? $_POST['titre'] : '',
+        'typeEvenement' => isset($_POST['typeEvenement']) ? $_POST['typeEvenement'] : '',
+        'date' => isset($_POST['date']) ? $_POST['date'] : '',
+        'lieu' => isset($_POST['lieu']) ? $_POST['lieu'] : '',
+        'clubOrganisateur' => isset($_POST['clubOrganisateur']) ? $_POST['clubOrganisateur'] : '',
+    ];
+
+    // Passer les critères à la méthode du DAO pour récupérer les événements filtrés
+    $evenements = $this->evenementDAO->getEvenementsWithPaginationAndSearch($criteria, $eventsPerPage, $offset);
+    
+    // Récupérer les événements premium
+    $premiumEvenements = $this->evenementDAO->getPremiumEvenements();
+
+    // Calculer le nombre total d'événements après filtrage
+    $totalEvents = $this->evenementDAO->countFilteredEvenements($criteria);
+    
+    // Calculer le nombre total de pages pour la pagination
+    $totalPages = ceil($totalEvents / $eventsPerPage);
+
+    // Inclure la vue
+    require 'view/evenements.php';
+}
+
     
     
     
