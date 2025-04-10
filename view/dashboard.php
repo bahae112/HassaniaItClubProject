@@ -48,6 +48,19 @@
                 </div>
             </div>
         </div>
+
+        <!-- Gestion des Sponsors -->
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-dark">Gestion des Sponsors</h3>
+                    <ul class="list-group">
+                        <li class="list-group-item"><a href="../index.php?action=listSponsors" class="text-decoration-none">Liste des Sponsors</a></li>
+                        <li class="list-group-item"><a href="../index.php?action=addSponsor" class="text-decoration-none">Ajouter un Sponsor</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Bouton de déconnexion -->

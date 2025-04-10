@@ -24,23 +24,29 @@ class MessageController {
         }
     }
 
-    // Ajouter un message
     public function addMessage() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $message = new Message(
-                $_POST['nom'],
-                $_POST['email'],
-                $_POST['objet'],
-                $_POST['message'],
-                date('Y-m-d H:i:s')
-            );
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $nom = $_POST['nom'] ?? null;
+        $email = $_POST['email'] ?? null;
+        $objet = $_POST['objet'] ?? null;
+        $contenu = $_POST['message'] ?? null;
 
+        if ($nom && $email && $objet && $contenu) {
+            $message = new Message($nom, $email, $objet, $contenu, date('Y-m-d H:i:s'));
             $this->messageDAO->saveMessage($message);
-            header("Location: index.php?action=listMessages");
+
+            // On renvoie juste une réponse brute pour JS
+            echo "success-message";
         } else {
-            require 'view/messages/add.php';
+            echo "error";
         }
+        exit; // Important ! Pour éviter d'inclure d'autres fichiers PHP ou du HTML
     }
+}
+
+
+
+
 
     // Supprimer un message
     public function deleteMessage($id) {

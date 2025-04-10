@@ -345,7 +345,22 @@ class EvenementController {
     $totalPages = ceil($totalEvents / $eventsPerPage);
 
     // Inclure la vue
-    require 'view/evenements.php';
+    require __DIR__ . '/../index2.php';
+
+}
+
+
+
+public function getEvenementById2($id) {
+    $evenement = $this->evenementDAO->getEvenementById($id);
+    
+    if ($evenement) {
+        // echo "Le fichier edit.php va être inclus !<br>";
+        return $evenement;
+        // include 'view/evenements.php';
+    } else {
+        echo "Événement non trouvé.";
+    }
 }
 
     

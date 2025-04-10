@@ -63,6 +63,52 @@
     .services-carousel-container::-webkit-scrollbar {
       display: none;
     }
+
+    #hero {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  margin-top: -70px; /* comme tu l’as précisé */
+}
+/* Le header doit avoir une position fixe */
+#header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Assure que le header est toujours au-dessus de la vidéo */
+    background-color: rgba(0, 0, 0, 0.8); /* Ajoute un fond semi-transparent si nécessaire */
+}
+
+#hero video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4); /* rend le texte plus lisible */
+  z-index: 1.5;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  color: white;
+  text-align: center;
+  top: 40%;
+  transform: translateY(-40%);
+}
+
     
   </style>
 
@@ -77,7 +123,7 @@
 
 <body class="index-page">
 
-  <header id="header" class="header d-flex align-items-center fixed-top">
+  <header id="header" class=" fixed-top">
     <div class="container position-relative d-flex align-items-center justify-content-between">
 
       <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
@@ -210,108 +256,143 @@
 
     </section><!-- /About Section -->
 
-    <!-- Portfolio Section -->
-<!-- Portfolio Section -->
+<!-- Section Événements Intéressants -->
 <section id="services" class="portfolio section">
-  <!-- Section Title -->
+  <!-- Titre de section -->
   <div class="container section-title" data-aos="fade-up">
-    <h2>intéressants</h2>
+    <h2>Événements Intéressants</h2>
     <p>Découvrez nos événements les plus intéressants</p>
   </div>
 
-  <!-- Horizontal Scrollable Cards -->
+  <!-- Cartes scrollables -->
   <div class="container">
     <div class="scroll-container">
-    
-      <!-- Event Card 1 -->
-      <div class="event-card" data-aos="fade-up">
-        <img src="public/assets/img/masonry-portfolio/masonry-portfolio-1.jpg" alt="Hackathon EHTP">
-        <div class="event-card-body">
-          <h5>Hackathon EHTP</h5>
-          <p>Un événement passionnant où les étudiants ont relevé des défis technologiques.</p>
+      <?php foreach ($premiumEvenements as $event): ?>
+        <div class="event-card" data-aos="fade-up">
+          <img src="<?= 'public/uploads/images/' . $event['titre'] . '.jpeg' ?>" alt="<?= htmlspecialchars($event['titre']) ?>">
+          <div class="event-card-body">
+            <h5><?= htmlspecialchars($event['titre']) ?></h5>
+            <p><strong>Date :</strong> <?= htmlspecialchars($event['date']) ?></p>
+            <p><strong>Statut :</strong> <?= htmlspecialchars($event['statut']) ?></p>
+          </div>
+          <div class="event-card-footer">
+            <a href="<?= 'public/uploads/images/' . $event['titre'] . '.jpeg' ?>" data-glightbox>Preview</a>
+            <a href="index.php?action=details&id=<?= $event['id'] ?>" class="">Détails</a>
+            
+            </div>
         </div>
-        <div class="event-card-footer">
-          <a href="public/assets/img/masonry-portfolio/masonry-portfolio-1.jpg" data-glightbox>Preview</a>
-          <a href="portfolio-details.html">Details</a>
-        </div>
-      </div>
 
-      <!-- Event Card 2 -->
-      <div class="event-card" data-aos="fade-up">
-        <img src="public/assets/img/masonry-portfolio/masonry-portfolio-2.jpg" alt="Workshop sur l'IA">
-        <div class="event-card-body">
-          <h5>Workshop sur l'IA</h5>
-          <p>Un atelier interactif sur les dernières tendances de l'intelligence artificielle.</p>
+        <!-- Modal Détails -->
+        <div class="modal fade" id="eventModal<?= $event['id'] ?>" tabindex="-1" aria-labelledby="eventModalLabel<?= $event['id'] ?>" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="eventModalLabel<?= $event['id'] ?>"><?= htmlspecialchars($event['titre']) ?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+              </div>
+              <div class="modal-body">
+                <img src="<?= 'public/uploads/images/' . $event['titre'] . '.jpeg' ?>" class="event-img mb-3" alt="Image Événement" style="width:100%; border-radius:10px;">
+                <p><strong>Description:</strong> <?= htmlspecialchars($event['description']) ?></p>
+                <p><strong>Type:</strong> <?= htmlspecialchars($event['typeEvenement']) ?></p>
+                <p><strong>Date:</strong> <?= htmlspecialchars($event['date']) ?></p>
+                <p><strong>Heure Début:</strong> <?= htmlspecialchars($event['heureDebut']) ?></p>
+                <p><strong>Heure Fin:</strong> <?= htmlspecialchars($event['heureFin']) ?></p>
+                <p><strong>Lieu:</strong> <?= htmlspecialchars($event['lieu']) ?></p>
+                <p><strong>Club Organisateur:</strong> <?= htmlspecialchars($event['clubOrganisateur']) ?></p>
+                <p><strong>École Organisatrice:</strong> <?= htmlspecialchars($event['ecoleOrganisatrice']) ?></p>
+                <p><strong>Statut:</strong> <?= htmlspecialchars($event['statut']) ?></p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="event-card-footer">
-          <a href="public/assets/img/masonry-portfolio/masonry-portfolio-2.jpg" data-glightbox>Preview</a>
-          <a href="portfolio-details.html">Details</a>
-        </div>
-      </div>
-
-      <!-- Event Card 3 -->
-      <div class="event-card" data-aos="fade-up">
-        <img src="public/assets/img/masonry-portfolio/masonry-portfolio-3.jpg" alt="Conférence sur la Blockchain">
-        <div class="event-card-body">
-          <h5>Conférence sur la Blockchain</h5>
-          <p>Apprenez tout sur la technologie blockchain et son impact futur.</p>
-        </div>
-        <div class="event-card-footer">
-          <a href="public/assets/img/masonry-portfolio/masonry-portfolio-3.jpg" data-glightbox>Preview</a>
-          <a href="portfolio-details.html">Details</a>
-        </div>
-      </div>
-
+      <?php endforeach; ?>
     </div>
   </div>
 </section>
 
-<!-- CSS pour la mise en page et le style des cartes -->
+<!-- CSS pour la section -->
 <style>
-#portfolio .scroll-container {
-  display: flex; /* Aligne les cartes horizontalement */
-  justify-content: space-between; /* Espacement égal entre les cartes */
-  gap: 20px; /* Espacement entre chaque carte */
-  overflow-x: auto; /* Permet le défilement horizontal si nécessaire */
+/* Scroll horizontal */
+.scroll-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  padding-bottom: 1rem;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
 }
 
+.scroll-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Carte événement */
 .event-card {
-  flex: 1; /* Permet à chaque carte de prendre la même largeur */
-  max-width: 30%; /* Limite la largeur à 30% de l'espace disponible */
-  min-width: 280px; /* Définit une largeur minimale pour les cartes */
-  border: 1px solid #ddd; /* Ajoute une bordure légère */
-  border-radius: 8px; /* Arrondit les coins */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ajoute une ombre légère pour le relief */
-  transition: transform 0.3s ease; /* Animation au survol */
+  flex: 0 0 auto;
+  width: 300px;
+  scroll-snap-align: start;
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.event-card:hover {
+  transform: scale(1.05);
 }
 
 .event-card img {
   width: 100%;
-  height: 200px; /* Définit une hauteur pour l'image */
-  object-fit: cover; /* Assure que l'image occupe tout l'espace sans déformer */
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
+  height: 200px;
+  object-fit: cover;
 }
 
 .event-card-body {
   padding: 15px;
 }
 
+.event-card-body h5 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.event-card-body p {
+  font-size: 0.9rem;
+  color: #333;
+  margin: 0.3rem 0;
+}
+
 .event-card-footer {
   display: flex;
   justify-content: space-between;
-  padding: 10px 15px;
+  padding: 10px 15px 15px;
+  align-items: center;
 }
 
-.event-card-footer a {
+.event-card-footer a,
+.event-card-footer button {
+  font-size: 0.85rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #0d6efd;
+  color: #0d6efd;
+  background: none;
+  border-radius: 5px;
   text-decoration: none;
-  color: #007bff;
+  transition: 0.3s;
 }
 
-.event-card:hover {
-  transform: scale(1.05); /* Agrandit légèrement la carte au survol */
+.event-card-footer a:hover,
+.event-card-footer button:hover {
+  background-color: #0d6efd;
+  color: white;
 }
 </style>
+
 
 
 
@@ -368,55 +449,8 @@
 
     </section><!-- /Features Section -->
 
-    <!-- Clients Section -->
-    <section id="clients" class="clients section">
+   
 
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-        <!-- Section Title -->
-    <div class="section-title" data-aos="fade-up">
-      <h2>Nos Sponsors</h2>
-      <p>Voici les entreprises et organisations qui soutiennent notre événement.</p>
-    </div>
-
-        <div class="row g-0 clients-wrap">
-
-          <div class="col-xl-3 col-md-4 client-logo">
-            <img src="public/assets/img/clients/client-1.png" class="img-fluid" alt="">
-          </div><!-- End Client Item -->
-
-          <div class="col-xl-3 col-md-4 client-logo">
-            <img src="public/assets/img/clients/client-2.png" class="img-fluid" alt="">
-          </div><!-- End Client Item -->
-
-          <div class="col-xl-3 col-md-4 client-logo">
-            <img src="public/assets/img/clients/client-3.png" class="img-fluid" alt="">
-          </div><!-- End Client Item -->
-
-          <div class="col-xl-3 col-md-4 client-logo">
-            <img src="public/assets/img/clients/client-4.png" class="img-fluid" alt="">
-          </div><!-- End Client Item -->
-
-          <div class="col-xl-3 col-md-4 client-logo">
-            <img src="public/assets/img/clients/client-5.png" class="img-fluid" alt="">
-          </div><!-- End Client Item -->
-
-          <div class="col-xl-3 col-md-4 client-logo">
-            <img src="public/assets/img/clients/client-6.png" class="img-fluid" alt="">
-          </div><!-- End Client Item -->
-
-          <div class="col-xl-3 col-md-4 client-logo">
-            <img src="public/assets/img/clients/client-7.png" class="img-fluid" alt="">
-          </div><!-- End Client Item -->
-
-          <div class="col-xl-3 col-md-4 client-logo">
-            <img src="public/assets/img/clients/client-8.png" class="img-fluid" alt="">
-          </div><!-- End Client Item -->
-
-        </div>
-
-      </div>
-
-    </section><!-- /Clients Section -->
 
     <!-- Stats Section -->
     <section id="stats" class="stats section dark-background">
@@ -466,168 +500,134 @@
 
     </section><!-- /Stats Section -->
 
-    <!-- Portfolio Section -->
-    <section id="portfolio" class="portfolio section">
-      <style>
-        .scroll-container {
-          display: flex;
-          overflow-x: auto;
-          gap: 1rem;
-          padding-bottom: 1rem;
-          scroll-snap-type: x mandatory;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none; /* Firefox */
-        }
-    
-        .scroll-container::-webkit-scrollbar {
-          display: none; /* Chrome, Safari, Opera */
-        }
-    
-        .event-card {
-          flex: 0 0 auto;
-          width: 300px;
-          scroll-snap-align: start;
-          border-radius: 1rem;
-          overflow: hidden;
-          background: white;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-          transition: transform 0.3s ease;
-        }
-    
-        .event-card:hover {
-          transform: scale(1.02);
-        }
-    
-        .event-card img {
-          width: 100%;
-          height: 200px;
-          object-fit: cover;
-        }
-    
-        .event-card-body {
-          padding: 1rem;
-        }
-    
-        .event-card-body h5 {
-          font-size: 1.1rem;
-          margin-bottom: 0.5rem;
-        }
-    
-        .event-card-body p {
-          font-size: 0.9rem;
-          color: #555;
-        }
-    
-        .event-card-footer {
-          padding: 0 1rem 1rem;
-          display: flex;
-          justify-content: space-between;
-        }
-    
-        .event-card-footer a {
-          font-size: 0.85rem;
-          padding: 0.4rem 0.7rem;
-          border: 1px solid #0d6efd;
-          color: #0d6efd;
-          border-radius: 5px;
-          text-decoration: none;
-          transition: 0.3s;
-        }
-    
-        .event-card-footer a:hover {
-          background-color: #0d6efd;
-          color: white;
-        }
-      </style>
-    
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Events</h2>
-        <p>Découvrez nos événements passés et à venir.</p>
-      </div>
-    
-      <div class="container">
-        <div class="scroll-container">
-    
-          <!-- Event Card 1 -->
-          <div class="event-card">
-            <img src="public/assets/img/masonry-portfolio/masonry-portfolio-1.jpg" alt="Hackathon EHTP">
-            <div class="event-card-body">
-              <h5>Hackathon EHTP</h5>
-              <p>Un événement passionnant où les étudiants ont relevé des défis technologiques.</p>
-            </div>
-            <div class="event-card-footer">
-              <a href="public/assets/img/masonry-portfolio/masonry-portfolio-1.jpg" data-glightbox>Preview</a>
-              <a href="portfolio-details.html">Details</a>
-            </div>
+<!-- Portfolio Section Dynamique -->
+<section id="portfolio" class="portfolio section">
+  <style>
+    .scroll-container {
+      display: flex;
+      overflow-x: auto;
+      gap: 1rem;
+      padding-bottom: 1rem;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .scroll-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .event-card {
+      flex: 0 0 auto;
+      width: 300px;
+      scroll-snap-align: start;
+      border-radius: 1rem;
+      overflow: hidden;
+      background: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .event-card:hover {
+      transform: scale(1.02);
+    }
+
+    .event-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .event-card-body {
+      padding: 1rem;
+    }
+
+    .event-card-body h5 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .event-card-body p {
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .event-card-footer {
+      padding: 0 1rem 1rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .event-card-footer a,
+    .event-card-footer button {
+      font-size: 0.85rem;
+      padding: 0.4rem 0.7rem;
+      border: 1px solid #0d6efd;
+      color: #0d6efd;
+      border-radius: 5px;
+      text-decoration: none;
+      background: none;
+      transition: 0.3s;
+    }
+
+    .event-card-footer a:hover,
+    .event-card-footer button:hover {
+      background-color: #0d6efd;
+      color: white;
+    }
+  </style>
+
+  <div class="container section-title" data-aos="fade-up">
+    <h2>Événements</h2>
+    <p>Découvrez nos événements passés et à venir.</p>
+  </div>
+
+  <div class="container">
+    <div class="scroll-container">
+      <?php foreach ($evenements as $event): ?>
+        <div class="event-card">
+          <img src="<?= 'public/uploads/images/' . $event['titre'] . '.jpeg' ?>" alt="<?= htmlspecialchars($event['titre']) ?>">
+          <div class="event-card-body">
+            <h5><?= htmlspecialchars($event['titre']) ?></h5>
+            <p><?= htmlspecialchars($event['description']) ?></p>
           </div>
-    
-          <!-- Event Card 2 -->
-          <div class="event-card">
-            <img src="public/assets/img/masonry-portfolio/masonry-portfolio-2.jpg" alt="Conférence sur l'IA">
-            <div class="event-card-body">
-              <h5>Conférence sur l'IA</h5>
-              <p>Présentation des dernières avancées en intelligence artificielle à EHTP.</p>
-            </div>
-            <div class="event-card-footer">
-              <a href="public/assets/img/masonry-portfolio/masonry-portfolio-2.jpg" data-glightbox>Preview</a>
-              <a href="portfolio-details.html">Details</a>
-            </div>
+          <div class="event-card-footer">
+            <a href="<?= 'public/uploads/images/' . $event['titre'] . '.jpeg' ?>" data-glightbox>Preview</a>
+            <a href="index.php?action=details&id=<?= $event['id'] ?>" class="">Détails</a>
           </div>
-    
-          <!-- Event Card 3 -->
-          <div class="event-card">
-            <img src="public/assets/img/masonry-portfolio/masonry-portfolio-3.jpg" alt="Atelier Python">
-            <div class="event-card-body">
-              <h5>Atelier Python</h5>
-              <p>Un atelier interactif pour débuter ou se perfectionner en programmation Python.</p>
-            </div>
-            <div class="event-card-footer">
-              <a href="public/assets/img/masonry-portfolio/masonry-portfolio-3.jpg" data-glightbox>Preview</a>
-              <a href="portfolio-details.html">Details</a>
-            </div>
-          </div>
-          <!-- Event Card 3 -->
-          <div class="event-card">
-            <img src="public/assets/img/masonry-portfolio/masonry-portfolio-3.jpg" alt="Atelier Python">
-            <div class="event-card-body">
-              <h5>Atelier Python</h5>
-              <p>Un atelier interactif pour débuter ou se perfectionner en programmation Python.</p>
-            </div>
-            <div class="event-card-footer">
-              <a href="public/assets/img/masonry-portfolio/masonry-portfolio-3.jpg" data-glightbox>Preview</a>
-              <a href="portfolio-details.html">Details</a>
-            </div>
-          </div>
-          <!-- Event Card 3 -->
-          <div class="event-card">
-            <img src="public/assets/img/masonry-portfolio/masonry-portfolio-3.jpg" alt="Atelier Python">
-            <div class="event-card-body">
-              <h5>Atelier Python</h5>
-              <p>Un atelier interactif pour débuter ou se perfectionner en programmation Python.</p>
-            </div>
-            <div class="event-card-footer">
-              <a href="public/assets/img/masonry-portfolio/masonry-portfolio-3.jpg" data-glightbox>Preview</a>
-              <a href="portfolio-details.html">Details</a>
-            </div>
-          </div>
-          <!-- Event Card 3 -->
-          <div class="event-card">
-            <img src="public/assets/img/masonry-portfolio/masonry-portfolio-3.jpg" alt="Atelier Python">
-            <div class="event-card-body">
-              <h5>Atelier Python</h5>
-              <p>Un atelier interactif pour débuter ou se perfectionner en programmation Python.</p>
-            </div>
-            <div class="event-card-footer">
-              <a href="public/assets/img/masonry-portfolio/masonry-portfolio-3.jpg" data-glightbox>Preview</a>
-              <a href="portfolio-details.html">Details</a>
-            </div>
-          </div>
-    
-          <!-- Ajoute autant de cartes que tu veux -->
-    
         </div>
-      </div>
-    </section>
+
+        <!-- Modal -->
+        <div class="modal fade" id="eventModal<?= $event['id'] ?>" tabindex="-1" aria-labelledby="eventModalLabel<?= $event['id'] ?>" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="eventModalLabel<?= $event['id'] ?>"><?= htmlspecialchars($event['titre']) ?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+              </div>
+              <div class="modal-body">
+                <img src="<?= 'public/uploads/images/' . $event['titre'] . '.jpeg' ?>" class="event-img mb-3" alt="Image Événement" style="width:100%; border-radius:10px;">
+                <p><strong>Description:</strong> <?= htmlspecialchars($event['description']) ?></p>
+                <p><strong>Type:</strong> <?= htmlspecialchars($event['typeEvenement']) ?></p>
+                <p><strong>Date:</strong> <?= htmlspecialchars($event['date']) ?></p>
+                <p><strong>Heure Début:</strong> <?= htmlspecialchars($event['heureDebut']) ?></p>
+                <p><strong>Heure Fin:</strong> <?= htmlspecialchars($event['heureFin']) ?></p>
+                <p><strong>Lieu:</strong> <?= htmlspecialchars($event['lieu']) ?></p>
+                <p><strong>Club Organisateur:</strong> <?= htmlspecialchars($event['clubOrganisateur']) ?></p>
+                <p><strong>École Organisatrice:</strong> <?= htmlspecialchars($event['ecoleOrganisatrice']) ?></p>
+                <p><strong>Statut:</strong> <?= htmlspecialchars($event['statut']) ?></p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</section>
+
     
 
     
@@ -862,83 +862,118 @@
 
     </section><!-- /Recent Posts Section -->
 
-    <!-- Contact Section -->
-    <section id="contact" class="contact section light-background">
+   <!-- Contact Section -->
+<section id="contact" class="contact section light-background">
 
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Contact</h2>
-        <p>.....</p>
-      </div><!-- End Section Title -->
+<!-- Section Title -->
+<div class="container section-title" data-aos="fade-up">
+  <h2>Contact</h2>
+  <p>.....</p>
+</div><!-- End Section Title -->
 
-      <div class="container" data-aos="fade" data-aos-delay="100">
+<div class="container" data-aos="fade" data-aos-delay="100">
+  <div class="row gy-4">
 
-        <div class="row gy-4">
-
-          <div class="col-lg-4">
-            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="200">
-              <i class="bi bi-geo-alt flex-shrink-0"></i>
-              <div>
-                <h3>Address</h3>
-                <p>A108 Adam Street, New York, NY 535022</p>
-              </div>
-            </div><!-- End Info Item -->
-
-            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
-              <i class="bi bi-telephone flex-shrink-0"></i>
-              <div>
-                <h3>Call Us</h3>
-                <p>+1 5589 55488 55</p>
-              </div>
-            </div><!-- End Info Item -->
-
-            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
-              <i class="bi bi-envelope flex-shrink-0"></i>
-              <div>
-                <h3>Email Us</h3>
-                <p>info@example.com</p>
-              </div>
-            </div><!-- End Info Item -->
-
-          </div>
-
-          <div class="col-lg-8">
-            <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
-              <div class="row gy-4">
-
-                <div class="col-md-6">
-                  <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
-                </div>
-
-                <div class="col-md-6 ">
-                  <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
-                </div>
-
-                <div class="col-md-12">
-                  <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
-                </div>
-
-                <div class="col-md-12">
-                  <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
-                </div>
-
-                <div class="col-md-12 text-center">
-                  <div class="loading">Loading</div>
-                  <div class="error-message"></div>
-                  <div class="sent-message">Your message has been sent. Thank you!</div>
-
-                  <button type="submit">Send Message</button>
-                </div>
-
-              </div>
-            </form>
-          </div><!-- End Contact Form -->
-
+    <div class="col-lg-4">
+      <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="200">
+        <i class="bi bi-geo-alt flex-shrink-0"></i>
+        <div>
+          <h3>Address</h3>
+          <p>A108 Adam Street, New York, NY 535022</p>
         </div>
-
       </div>
 
-    </section><!-- /Contact Section -->
+      <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
+        <i class="bi bi-telephone flex-shrink-0"></i>
+        <div>
+          <h3>Call Us</h3>
+          <p>+1 5589 55488 55</p>
+        </div>
+      </div>
+
+      <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
+        <i class="bi bi-envelope flex-shrink-0"></i>
+        <div>
+          <h3>Email Us</h3>
+          <p>info@example.com</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <form id="contact-form" action="index.php?action=addMessage" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
+        <div class="row gy-4">
+
+          <div class="col-md-6">
+            <input type="text" name="nom" class="form-control" placeholder="Your Name" required>
+          </div>
+
+          <div class="col-md-6">
+            <input type="email" class="form-control" name="email" placeholder="Your Email" required>
+          </div>
+
+          <div class="col-md-12">
+            <input type="text" class="form-control" name="objet" placeholder="Subject" required>
+          </div>
+
+          <div class="col-md-12">
+            <textarea class="form-control" name="message" rows="6" placeholder="Message" required></textarea>
+          </div>
+
+          <div class="col-md-12 text-center">
+            <div class="loading" style="display: none;">Loading...</div>
+            <div class="error-message" style="display: none; color: red;"></div>
+            <div class="sent-message" style="display: none; color: green;">Votre message a bien été envoyé.</div>
+
+            <button type="submit">Send Message</button>
+          </div>
+
+        </div>
+      </form>
+    </div><!-- End Contact Form -->
+
+  </div>
+</div>
+</section><!-- /Contact Section -->
+
+<!-- JavaScript AJAX Submission -->
+<script>
+document.getElementById('contact-form').addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const form = e.target;
+  const formData = new FormData(form);
+
+  const loading = form.querySelector('.loading');
+  const errorMessage = form.querySelector('.error-message');
+  const sentMessage = form.querySelector('.sent-message');
+
+  // Reset messages
+  loading.style.display = 'block';
+  errorMessage.style.display = 'none';
+  sentMessage.style.display = 'none';
+
+  fetch(form.action, {
+  method: 'POST',
+  body: new FormData(form)
+})
+.then(response => response.text())
+.then(data => {
+  if (data.includes('success-message')) {
+    sentMessage.style.display = 'block';
+    form.reset();
+  } else {
+    errorMessage.innerHTML = "Une erreur est survenue. Merci de vérifier les champs.";
+    errorMessage.style.display = 'block';
+  }
+})
+.catch((error) => {
+  errorMessage.innerHTML = "Erreur lors de l'envoi du formulaire.";
+  errorMessage.style.display = 'block';
+});
+});
+</script>
+
 
   </main>
 
@@ -967,6 +1002,12 @@
       </div>
     </div>
   </footer>
+
+
+
+
+
+  
 
   <!-- Scroll Top -->
   <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>

@@ -6,10 +6,17 @@ $action = $_GET['action'] ?? 'dashboard';
 
 // Empêcher l'accès à toutes les actions sauf 'dashboard' et 'Authenticate' (car c'est l'action de connexion)
 // Si l'utilisateur n'est pas connecté et que l'action est autre que 'dashboard' ou 'Authenticate', il sera redirigé
-if ( $action !== 'Authenticate' && $action !== 'evenements' &&  !isset($_SESSION['user'])) {
+if ($action !== 'Authenticate' && $action !== 'details' && $action !== 'addMessage' && $action !== 'Home' && $action !== 'listSponsors' && !isset($_SESSION['user'])) {
     header("Location: view/layout.php");
     exit();
 }
+
+// Vérification de l'authentification
+if ($action !== 'Authenticate' && $action !== 'Home' && $action !== 'details' && $action !== 'addMessage' && !isset($_SESSION['user'])) {
+    header("Location: view/layout.php");
+    exit();
+}
+
 
 // Vérifier si l'utilisateur est authentifié et a le rôle 'admin'
 if (isset($_SESSION['user']) && $_SESSION['role'] !== 'admin') {
@@ -24,6 +31,7 @@ include_once 'controller/EvenementController.php';
 include_once 'controller/UtilisateurController.php';
 include_once 'controller/MessageController.php';
 include_once 'controller/authController.php';
+include_once 'controller/SponsorController.php';
 
 // Définition de l'action à effectuer (par défaut, l'action est 'dashboard')
 $action = $_GET['action'] ?? 'dashboard';
@@ -32,6 +40,7 @@ $action = $_GET['action'] ?? 'dashboard';
 $evenementController = new EvenementController();
 $utilisateurController = new UtilisateurController();
 $messageController = new MessageController();
+$sponsorController = new SponsorController();
 
 // Routeur pour gérer les différentes actions en fonction de l'URL
 switch ($action) {
@@ -166,18 +175,81 @@ switch ($action) {
         break;
 
     // Tableau de bord (admin dashboard par défaut)
-    // case 'dashboard':
     default:
         include 'view/layout.php';  // Page principale pour l'admin
         break;
     
-    case 'evenements':
+    case 'Home':
         $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
         $evenementController->afficherEvenements($page);
         break;
-    // case 'rechercherEvenements2':
-    //     $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-    //     $evenementController->afficherEvenements($page);
-    //     break;        
+          
+    case 'details':
+            if (isset($_GET['id'])) {
+                $evenementId = (int)$_GET['id'];
+        
+                // Récupérer l'événement
+                $evenement = $evenementController->getEvenementById2($evenementId);
+        
+                if ($evenement) {
+                    // Récupérer le nom de l’événement (par exemple 'titre')
+                    $evenementNom = $evenement->getTitre();
+        
+                    // Obtenir les sponsors liés à ce nom
+                    $sponsors = $sponsorController->afficherSponsors($evenementNom);
+        
+                    // Afficher la vue
+                    include 'view/evenements.php';
+
+
+                } else {
+                    echo "<div class='alert alert-danger text-center'>Événement non trouvé.</div>";
+                }
+            } else {
+                echo "<div class='alert alert-warning text-center'>Aucun ID d'événement fourni.</div>";
+            }
+            break;
+        
+    // Actions sponsors
+    case 'addSponsor':
+        $sponsorController->ajouterSponsor();
+        break;
+        
+    case 'listSponsors':
+        $sponsorController->listSponsors();  // Afficher tous les sponsors
+        break;
+
+    case 'editSponsor':
+        if (isset($_GET['id'])) {
+            $sponsorId = (int)$_GET['id'];
+            $sponsorController->editSponsor($sponsorId);  // Modifier un sponsor
+        }
+        break;
+    
+    case 'updateSponsor':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['id'];
+            $nom = $_POST['nom'];
+            $evenementnom = $_POST['evenementnom'];
+            $siteweb = $_POST['siteweb'] ?? null;
+            $description = $_POST['description'] ?? null;
+            $logo = $_FILES['logo'] ?? null; // Si l'image est envoyée
+    
+            $sponsorController->updateSponsor($id, $nom, $evenementnom, $siteweb, $description, $logo);
+        }
+        break;
+    
+    case 'deleteSponsor':
+        if (isset($_GET['id'])) {
+            $sponsorId = $_GET['id'];
+            $sponsorController->deleteSponsor($sponsorId);  // Supprimer un sponsor
+            header('Location: index.php?action=listSponsors');
+        }
+        break;
+    
+    case 'addMessage':
+        $messageController->addMessage();
+        break;
+        
 }
 ?>
